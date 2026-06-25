@@ -1,7 +1,7 @@
 // @ts-check
-import { defineConfig } from '@playwright/test';
+const { defineConfig } = require('@playwright/test');
 
-export default defineConfig({
+module.exports = defineConfig({
   testDir: './tests',
 
   // Max time for a single test
@@ -24,6 +24,7 @@ export default defineConfig({
     actionTimeout: 10 * 1000,
 
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
   },
 
   retries: 1,

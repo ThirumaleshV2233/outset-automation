@@ -1,37 +1,53 @@
+/**
+ * PopupLocators – Klaviyo newsletter popup selectors
+ *
+ * All selectors are scoped to `[data-testid="POPUP"]` so they never
+ * collide with the footer newsletter form or other Klaviyo embeds.
+ *
+ * We deliberately avoid dynamic Klaviyo IDs (form IDs, action IDs,
+ * rich-text element IDs) because they change every time the form is
+ * republished in Klaviyo.
+ */
 const PopupLocators = {
 
-    // ─── Klaviyo Newsletter Popup Form ───────────────────────────────────────
-    form:                   'form[data-testid="klaviyo-form-WWMLkr"]',
-    formByClass:            'form.klaviyo-form',
+    // ─── Popup Container ────────────────────────────────────────────────────
+    popupContainer:         '[data-testid="POPUP"]',
+    form:                   '[data-testid="POPUP"] form.klaviyo-form',
+    modalFormContainer:     '[data-testid="modal-form-container"]',
 
-    // ─── Heading / Rich Text ─────────────────────────────────────────────────
-    headingRichText:        '#rich-text-01KVQVZFHMBGVSBKPWE9EWR26T',
-    headingText:            '#rich-text-01KVQVZFHMBGVSBKPWE9EWR26T p span',
+    // ─── Close Button (X icon) ──────────────────────────────────────────────
+    closeBtn:               'button[aria-label="Close dialog"]',
 
-    // ─── Email Input ─────────────────────────────────────────────────────────
-    emailLabel:             '#label-email_01KVQVZFHZ1EQ8HHZCYF9337ZM',
-    emailInput:             '#email_01KVQVZFHZ1EQ8HHZCYF9337ZM',
-    emailInputByAttr:       'input[type="email"][name="email"]',
-    emailInputPlaceholder:  'input[placeholder="EMAIL"]',
+    // ─── Heading / Rich Text ────────────────────────────────────────────────
+    // First .klaviyo-form-richtext inside the popup is the heading block
+    headingRichText:        '[data-testid="POPUP"] .klaviyo-form-richtext',
+    // Grab inner spans for text assertions (e.g. "GET 15% OFF")
+    headingSpans:           '[data-testid="POPUP"] .klaviyo-form-richtext:first-of-type span',
 
-    // ─── Buttons ─────────────────────────────────────────────────────────────
-    unlockDiscountBtn:      'button[data-action-id="01KVQVZFDTRV1Q85AGEJNPHNKT"]',
-    noThanksBtn:            'button[data-action-id="01KVQVZFDDCHXPNKRVBSJ8FA0Q"]',
+    // ─── Email Input ────────────────────────────────────────────────────────
+    emailInput:             '[data-testid="POPUP"] input[type="email"][name="email"]',
 
-    // ─── Disclaimer / Footer Rich Text ───────────────────────────────────────
-    disclaimerRichText:     '#rich-text-01KVQVZFJNBD4C78EMY0SD8YC6',
-    disclaimerText:         '#rich-text-01KVQVZFJNBD4C78EMY0SD8YC6 p span',
-    privacyPolicyLink:      'a[href="https://theoutset.com/policies/privacy-policy"]',
+    // ─── Buttons ────────────────────────────────────────────────────────────
+    // The popup has exactly two .klaviyo-form-button elements:
+    //   1st → "UNLOCK MY 15% OFF"   (primary CTA)
+    //   2nd → "No Thanks, I'll Pay Full Price."  (dismiss)
+    allButtons:             '[data-testid="POPUP"] button.klaviyo-form-button',
+    unlockDiscountBtn:      '[data-testid="POPUP"] button.klaviyo-form-button:first-of-type',
+    noThanksBtn:            '[data-testid="POPUP"] button.klaviyo-form-button:last-of-type',
 
-    // ─── Popup Image ─────────────────────────────────────────────────────────
-    popupImage:             'form[data-testid="klaviyo-form-WWMLkr"] img[alt="2"]',
+    // ─── Disclaimer / Footer Rich Text ──────────────────────────────────────
+    disclaimerRichText:     '[data-testid="POPUP"] .klaviyo-form-richtext:last-of-type',
+    privacyPolicyLink:      '[data-testid="POPUP"] a[href*="privacy-policy"]',
 
-    // ─── Form Rows & Components (generic) ────────────────────────────────────
-    formRows:               '[data-testid="form-row"]',
-    formComponents:         '[data-testid="form-component"]',
+    // ─── Popup Image ────────────────────────────────────────────────────────
+    popupImage:             '[data-testid="POPUP"] form.klaviyo-form img',
 
-    // ─── Hidden Submit ────────────────────────────────────────────────────────
-    hiddenSubmitInput:      'input[type="submit"][value="Submit"]',
+    // ─── Form Rows & Components (generic) ───────────────────────────────────
+    formRows:               '[data-testid="POPUP"] [data-testid="form-row"]',
+    formComponents:         '[data-testid="POPUP"] [data-testid="form-component"]',
+
+    // ─── Hidden Submit ──────────────────────────────────────────────────────
+    hiddenSubmitInput:      '[data-testid="POPUP"] input[type="submit"]',
 
 };
 

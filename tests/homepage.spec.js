@@ -3,8 +3,15 @@ const Homepage  = require('../Pages/Homepage');
 const PopupPage = require('../Pages/PopupPage');
 
 // ─────────────────────────────────────────────────────────────────────────────
-//  The Outset – Homepage E2E Test Suite
-//  Priority: P0 = Critical | P1 = High | P2 = Medium
+//  The Outset – Homepage End-to-End Test Suite
+//
+//  Priority levels:
+//    P0 = Critical  – must pass before any release
+//    P1 = High      – core user journeys
+//    P2 = Medium    – secondary UX & visual checks
+//
+//  Popup tests use a fresh browser context (no cookies/storage) so the
+//  Klaviyo popup always appears as if it's a brand-new visitor.
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe('The Outset – Homepage', () => {
@@ -16,7 +23,7 @@ test.describe('The Outset – Homepage', () => {
         homepage = new Homepage(page);
         popup    = new PopupPage(page);
         await homepage.navigate();
-        // Close newsletter popup before every test so it never blocks assertions
+        // Dismiss the Klaviyo popup before every test so it never blocks UI
         await popup.closePopupIfVisible();
     });
 
@@ -26,38 +33,69 @@ test.describe('The Outset – Homepage', () => {
 
     test.describe('P0 | Critical', () => {
 
-        test('Homepage loads with correct title, URL and critical sections', async ({ page }) => {
+        test('should load the homepage with correct title, URL, and all critical sections visible', async ({ page }) => {
             await homepage.verifyPageTitleAndURL();
             await homepage.verifyCriticalSectionsLoaded();
             await homepage.verifyLogoIsVisible();
             await homepage.verifyPromoBar();
         });
 
-        test('Newsletter popup appears on fresh visit and dismisses via "No Thanks"', async ({ page }) => {
-            // Reload to get fresh popup trigger
-            await page.reload({ waitUntil: 'domcontentloaded' });
+        test('should display the Klaviyo newsletter popup with all required elements on a fresh visit', async ({ browser }) => {
+            // Fresh context = brand-new visitor, popup will always appear
+            const context = await browser.newContext();
+            const page = await context.newPage();
+            await page.goto('https://theoutset.com', { waitUntil: 'domcontentloaded' });
+
             const freshPopup = new PopupPage(page);
 
-            // Popup must be visible with all key elements
             await freshPopup.verifyPopupIsVisible();
+            await freshPopup.verifyFormIsVisible();
             await freshPopup.verifyPopupHeading();
+            await freshPopup.verifyHeadingText('15% OFF');
             await freshPopup.verifyEmailInput();
             await freshPopup.verifyUnlockBtn();
             await freshPopup.verifyNoThanksBtn();
+            await freshPopup.verifyCloseBtn();
+            await freshPopup.verifyPopupImage();
 
-            // Dismiss and confirm it's gone
-            await freshPopup.closePopupIfVisible();
-            await expect(page.locator('form[data-testid="klaviyo-form-WWMLkr"]')).not.toBeVisible();
+            await context.close();
         });
 
-        test('Hero banner is visible and "Shop Now" CTA navigates to correct product page', async ({ page }) => {
+        test('should dismiss the newsletter popup when clicking "No Thanks" and verify it disappears', async ({ browser }) => {
+            const context = await browser.newContext();
+            const page = await context.newPage();
+            await page.goto('https://theoutset.com', { waitUntil: 'domcontentloaded' });
+
+            const freshPopup = new PopupPage(page);
+            await freshPopup.verifyPopupIsVisible();
+            await freshPopup.closeViaNoThanks();
+
+            await expect(page.locator('[data-testid="POPUP"]')).not.toBeVisible();
+            await context.close();
+        });
+
+        test('should dismiss the newsletter popup when clicking the X close button', async ({ browser }) => {
+            const context = await browser.newContext();
+            const page = await context.newPage();
+            await page.goto('https://theoutset.com', { waitUntil: 'domcontentloaded' });
+
+            const freshPopup = new PopupPage(page);
+            await freshPopup.verifyPopupIsVisible();
+            await freshPopup.closeViaXButton();
+
+            await expect(page.locator('[data-testid="POPUP"]')).not.toBeVisible();
+            await context.close();
+        });
+
+        test('should navigate to the sunscreen product page when clicking the hero "Shop Now" CTA', async ({ page }) => {
             await homepage.verifyHeroSection();
             await homepage.clickHeroShopNow();
+
             await expect(page).toHaveURL(/hydrasheer-mineral-sunscreen-spf-30/);
-            await expect(page).not.toHaveURL('/');
+            await expect(page).not.toHaveURL(/theoutset\.com\/?$/);
         });
 
-        test('All primary navigation links are rendered and accessible', async ({ page }) => {
+        test('should render all primary desktop navigation links', async ({ page }) => {
             await homepage.verifyAllNavLinksVisible();
         });
 
@@ -69,60 +107,70 @@ test.describe('The Outset – Homepage', () => {
 
     test.describe('P1 | High Priority', () => {
 
-        test('Logo click redirects back to homepage from any state', async ({ page }) => {
-            // Navigate away then click logo to return
+        test('should navigate back to the homepage when clicking the logo from another page', async ({ page }) => {
+            // Navigate away first
             await homepage.clickBestSellers();
             await expect(page).toHaveURL(/collections\/best-sellers/);
+
+            // Click logo to return
             await homepage.clickLogo();
             await expect(page).toHaveURL(/theoutset\.com\/?$/);
         });
 
-        test('"Best Sellers" nav link navigates to the Best Sellers collection', async ({ page }) => {
+        test('should navigate to the Best Sellers collection when clicking the nav link', async ({ page }) => {
             await homepage.clickBestSellers();
             await expect(page).toHaveURL(/collections\/best-sellers/);
             await expect(page).toHaveTitle(/Best Sellers/i);
         });
 
-        test('Skincare mega-menu opens on hover and displays all sub-links', async ({ page }) => {
+        test('should open the Skincare mega-menu on hover and display sub-category links', async ({ page }) => {
             await homepage.hoverSkincare();
+
             const submenu = page.locator('.menu-item__submenu');
             await expect(submenu).toBeVisible();
 
-            // Verify key sub-category links are present inside the submenu
+            // Verify key sub-category links are present
             await expect(submenu.locator('a[href="/collections/cleansers-exfoliators"]')).toBeVisible();
             await expect(submenu.locator('a[href="/collections/serums-oils"]')).toBeVisible();
             await expect(submenu.locator('a[href="/collections/moisturizers-masks"]')).toBeVisible();
             await expect(submenu.locator('a[href="/collections/travel-size"]')).toBeVisible();
         });
 
-        test('Search bar opens, accepts input, and returns results page', async ({ page }) => {
+        test('should open search, accept a query, and navigate to the results page', async ({ page }) => {
             await homepage.searchFor('sunscreen');
+
             await expect(page).toHaveURL(/search.*q=sunscreen/);
-            // Search results page should not 404
+            // The search results page should not be a 404
             await expect(page.locator('body')).not.toContainText('404');
         });
 
-        test('Product carousel renders cards with title, image, and Add to Bag button', async ({ page }) => {
+        test('should display product cards with titles, images, and a quick-add button on hover', async ({ page }) => {
             await homepage.verifyProductCarousel();
-            // Hover first card to reveal Add to Bag button, then verify it is clickable
+
+            // Hover the first product card to reveal the Add to Bag button
             const firstCard = page.locator('.product-card').first();
             await firstCard.hover();
-            await expect(firstCard.locator('button.quick-add-to-cart__button')).toBeVisible();
+            await expect(firstCard.locator('button.quick-add-to-cart__button'))
+                .toBeVisible();
         });
 
-        test('Clicking a product card title navigates to the product detail page', async ({ page }) => {
-            const firstProductTitle = await page.locator('.product-card__title a').first().innerText();
+        test('should navigate to the product detail page when clicking a product card title', async ({ page }) => {
+            const firstTitleLocator = page.locator('.product-card__title a').first();
+            const productName = await firstTitleLocator.innerText();
+
             await homepage.clickFirstProductCard();
             await expect(page).not.toHaveURL(/theoutset\.com\/?$/);
-            // PDP should contain the product name in the title
-            await expect(page).toHaveTitle(new RegExp(firstProductTitle.trim().split(' ')[0], 'i'));
+
+            // PDP title should contain part of the product name
+            const firstWord = productName.trim().split(' ')[0];
+            await expect(page).toHaveTitle(new RegExp(firstWord, 'i'));
         });
 
-        test('Cart icon shows 0 items by default for a guest user', async ({ page }) => {
+        test('should show a cart count of 0 for guest users', async ({ page }) => {
             await homepage.verifyCartCount('0');
         });
 
-        test('"Scarlett\'s Routine" nav link navigates to the correct page', async ({ page }) => {
+        test('should navigate to the Scarlett\'s Routine page when clicking the nav link', async ({ page }) => {
             await homepage.clickScarlettRoutine();
             await expect(page).toHaveURL(/scarlett-johansson-skincare-routine/);
         });
@@ -135,48 +183,68 @@ test.describe('The Outset – Homepage', () => {
 
     test.describe('P2 | Medium Priority', () => {
 
-        test('Marquee strip is visible and displays product claim badges', async ({ page }) => {
+        test('should display the marquee ticker strip with VEGAN, CRUELTY FREE, and FRAGRANCE FREE badges', async ({ page }) => {
             await homepage.verifyMarqueeSection();
-            // Verify specific claims are rendered in the ticker
-            const texts = page.locator('.marquee__content-text');
-            await expect(texts.filter({ hasText: 'VEGAN' }).first()).toBeVisible();
-            await expect(texts.filter({ hasText: 'CRUELTY FREE' }).first()).toBeVisible();
-            await expect(texts.filter({ hasText: 'FRAGRANCE FREE' }).first()).toBeVisible();
+
+            const badges = page.locator('.marquee__content-text');
+            await expect(badges.filter({ hasText: 'VEGAN' }).first()).toBeVisible();
+            await expect(badges.filter({ hasText: 'CRUELTY FREE' }).first()).toBeVisible();
+            await expect(badges.filter({ hasText: 'FRAGRANCE FREE' }).first()).toBeVisible();
         });
 
-        test('About Us mega-menu opens on hover with correct sub-links', async ({ page }) => {
+        test('should open the About Us mega-menu on hover with sub-links', async ({ page }) => {
             await homepage.hoverAboutUs();
             await expect(page.locator('a[href="/pages/hyaluroset-complex"]')).toBeVisible();
             await expect(page.locator('a[href="/pages/ingredient-list"]')).toBeVisible();
             await expect(page.locator('a[href="/pages/sensitive-skin"]')).toBeVisible();
         });
 
-        test('Mobile hamburger menu opens and closes correctly', async ({ page }) => {
+        test('should open and close the mobile hamburger menu on a mobile viewport', async ({ page }) => {
             await page.setViewportSize({ width: 390, height: 844 }); // iPhone 14
             await homepage.openMobileMenu();
             await expect(page.locator('#navMenuWrapper')).toBeVisible();
+
             await homepage.closeMobileMenu();
             await expect(page.locator('#navMenuWrapper')).not.toBeVisible();
         });
 
-        test('Mobile menu footer contains Instagram and TikTok social links', async ({ page }) => {
+        test('should display Instagram and TikTok social links in the mobile menu', async ({ page }) => {
             await page.setViewportSize({ width: 390, height: 844 });
             await homepage.openMobileMenu();
-            await expect(page.locator('a[href="https://www.instagram.com/theoutset/"]')).toBeVisible();
-            await expect(page.locator('a[href="https://www.tiktok.com/@theoutset"]')).toBeVisible();
+
+            await expect(page.locator('a[href="https://www.instagram.com/theoutset/"]'))
+                .toBeVisible();
+            await expect(page.locator('a[href="https://www.tiktok.com/@theoutset"]'))
+                .toBeVisible();
         });
 
-        test('Promo bar "Free Shipping" message is visible for US visitors', async ({ page }) => {
+        test('should display the "Free Shipping" message in the promo bar', async ({ page }) => {
             await expect(page.locator('.promo-bar .swiper-slide-active p'))
                 .toContainText('Free Shipping');
         });
 
-        test('Newsletter popup privacy policy link has correct href', async ({ page }) => {
-            await page.reload({ waitUntil: 'domcontentloaded' });
+        test('should have a privacy policy link with correct href and target="_blank" in the popup', async ({ browser }) => {
+            const context = await browser.newContext();
+            const page = await context.newPage();
+            await page.goto('https://theoutset.com', { waitUntil: 'domcontentloaded' });
+
             const freshPopup = new PopupPage(page);
             await freshPopup.verifyPopupIsVisible();
-            await expect(page.locator('a[href="https://theoutset.com/policies/privacy-policy"]'))
-                .toHaveAttribute('target', '_blank');
+            await freshPopup.verifyPrivacyPolicyLink();
+
+            await context.close();
+        });
+
+        test('should display the disclaimer consent text in the popup', async ({ browser }) => {
+            const context = await browser.newContext();
+            const page = await context.newPage();
+            await page.goto('https://theoutset.com', { waitUntil: 'domcontentloaded' });
+
+            const freshPopup = new PopupPage(page);
+            await freshPopup.verifyPopupIsVisible();
+            await freshPopup.verifyDisclaimerText();
+
+            await context.close();
         });
 
     });

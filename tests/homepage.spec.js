@@ -126,7 +126,7 @@ test.describe('The Outset – Homepage', () => {
         test('should open the Skincare mega-menu on hover and display sub-category links', async ({ page }) => {
             await homepage.hoverSkincare();
 
-            const submenu = page.locator('.menu-item__submenu');
+            const submenu = page.locator('.menu-item__submenu').first();
             await expect(submenu).toBeVisible();
 
             // Verify key sub-category links are present
@@ -150,7 +150,7 @@ test.describe('The Outset – Homepage', () => {
             // Hover the first product card to reveal the Add to Bag button
             const firstCard = page.locator('.product-card').first();
             await firstCard.hover();
-            await expect(firstCard.locator('button.quick-add-to-cart__button'))
+            await expect(firstCard.locator('button.quick-add-to-cart__button').first())
                 .toBeVisible();
         });
 
@@ -194,9 +194,9 @@ test.describe('The Outset – Homepage', () => {
 
         test('should open the About Us mega-menu on hover with sub-links', async ({ page }) => {
             await homepage.hoverAboutUs();
-            await expect(page.locator('a[href="/pages/hyaluroset-complex"]')).toBeVisible();
-            await expect(page.locator('a[href="/pages/ingredient-list"]')).toBeVisible();
-            await expect(page.locator('a[href="/pages/sensitive-skin"]')).toBeVisible();
+            await expect(page.locator('a[href="/pages/hyaluroset-complex"]').first()).toBeVisible();
+            await expect(page.locator('a[href="/pages/ingredient-list"]').first()).toBeVisible();
+            await expect(page.locator('a[href="/pages/sensitive-skin"]').first()).toBeVisible();
         });
 
         test('should open and close the mobile hamburger menu on a mobile viewport', async ({ page }) => {
@@ -211,10 +211,10 @@ test.describe('The Outset – Homepage', () => {
         test('should display Instagram and TikTok social links in the mobile menu', async ({ page }) => {
             await page.setViewportSize({ width: 390, height: 844 });
             await homepage.openMobileMenu();
-
-            await expect(page.locator('a[href="https://www.instagram.com/theoutset/"]'))
+ 
+            await expect(page.locator('#navMenuWrapper').locator('a[href="https://www.instagram.com/theoutset/"]').first())
                 .toBeVisible();
-            await expect(page.locator('a[href="https://www.tiktok.com/@theoutset"]'))
+            await expect(page.locator('#navMenuWrapper').locator('a[href="https://www.tiktok.com/@theoutset"]').first())
                 .toBeVisible();
         });
 

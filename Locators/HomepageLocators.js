@@ -105,16 +105,16 @@ const HomepageLocators = {
     marqueeItemText:        '.marquee__content-text',
 
     // ─── Product Carousel ───────────────────────────────────────────────────
-    productCarouselSection: '.product-carousel',
-    productCarouselTitle:   '.product-carousel__title',
+    productCarouselSection: '.product-carousel >> nth=0',
+    productCarouselTitle:   '.product-carousel__title >> nth=0',
     productCarouselTabPanel:'#tab-panel-0',
-    productCards:           '.product-card',
-    productCardTitle:       '.product-card__title a',
-    productCardImage:       '.product-card__image',
-    productCardDescription: '.product-card__description',
-    addToBagBtn:            'button.quick-add-to-cart__button',
-    productCarouselPrevBtn: '.product-carousel .swiper-button-prev',
-    productCarouselNextBtn: '.product-carousel .swiper-button-next',
+    productCards:           '.product-carousel >> nth=0 >> .product-card',
+    productCardTitle:       '.product-carousel >> nth=0 >> .product-card__title a',
+    productCardImage:       '.product-carousel >> nth=0 >> .product-card__image',
+    productCardDescription: '.product-carousel >> nth=0 >> .product-card__description',
+    addToBagBtn:            '.product-carousel >> nth=0 >> button.quick-add-to-cart__button',
+    productCarouselPrevBtn: '.product-carousel >> nth=0 >> .swiper-button-prev',
+    productCarouselNextBtn: '.product-carousel >> nth=0 >> .swiper-button-next',
 
     // ─── Footer Newsletter Form (Klaviyo embed) ─────────────────────────────
     footerNewsletterForm:   'footer form.klaviyo-form',

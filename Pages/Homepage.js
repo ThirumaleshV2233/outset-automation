@@ -1,5 +1,5 @@
 const { expect } = require('@playwright/test');
-const HomepageLocators = require('../Locators/HomepageLocators');
+const HomepageLocators = require('./Locators/HomepageLocators');
 
 /**
  * Homepage – Page-object for the main landing page of theoutset.com.

@@ -22,7 +22,7 @@ const PopupLocators = {
     // First .klaviyo-form-richtext inside the popup is the heading block
     headingRichText:        '[data-testid="POPUP"] .klaviyo-form-richtext',
     // Grab inner spans for text assertions (e.g. "GET 15% OFF")
-    headingSpans:           '[data-testid="POPUP"] .klaviyo-form-richtext:first-of-type span',
+    headingSpans:           '[data-testid="POPUP"] .klaviyo-form-richtext >> nth=0 >> span',
 
     // ─── Email Input ────────────────────────────────────────────────────────
     emailInput:             '[data-testid="POPUP"] input[type="email"][name="email"]',
@@ -32,11 +32,11 @@ const PopupLocators = {
     //   1st → "UNLOCK MY 15% OFF"   (primary CTA)
     //   2nd → "No Thanks, I'll Pay Full Price."  (dismiss)
     allButtons:             '[data-testid="POPUP"] button.klaviyo-form-button',
-    unlockDiscountBtn:      '[data-testid="POPUP"] button.klaviyo-form-button:first-of-type',
-    noThanksBtn:            '[data-testid="POPUP"] button.klaviyo-form-button:last-of-type',
+    unlockDiscountBtn:      '[data-testid="POPUP"] button.klaviyo-form-button >> nth=0',
+    noThanksBtn:            '[data-testid="POPUP"] button.klaviyo-form-button >> nth=1',
 
     // ─── Disclaimer / Footer Rich Text ──────────────────────────────────────
-    disclaimerRichText:     '[data-testid="POPUP"] .klaviyo-form-richtext:last-of-type',
+    disclaimerRichText:     '[data-testid="POPUP"] .klaviyo-form-richtext >> nth=-1',
     privacyPolicyLink:      '[data-testid="POPUP"] a[href*="privacy-policy"]',
 
     // ─── Popup Image ────────────────────────────────────────────────────────

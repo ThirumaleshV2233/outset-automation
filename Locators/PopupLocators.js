@@ -11,42 +11,43 @@
 const PopupLocators = {
 
     // ─── Popup Container ────────────────────────────────────────────────────
-    popupContainer:         '[data-testid="POPUP"]',
-    form:                   '[data-testid="POPUP"] form.klaviyo-form',
-    modalFormContainer:     '[data-testid="modal-form-container"]',
+    popupContainer: '[data-testid="POPUP"]',
+    form: '[data-testid="POPUP"] form.klaviyo-form',
+    modalFormContainer: '[data-testid="modal-form-container"]',
 
     // ─── Close Button (X icon) ──────────────────────────────────────────────
-    closeBtn:               'button[aria-label="Close dialog"]',
+    closeBtn: 'button[aria-label="Close dialog"]',
 
     // ─── Heading / Rich Text ────────────────────────────────────────────────
     // Richtext blocks inside the popup
-    headingRichText:        '[data-testid="POPUP"] .klaviyo-form-richtext',
-    headingSpans:           '[data-testid="POPUP"] .klaviyo-form-richtext span',
+    headingRichText: '[data-testid="POPUP"] .klaviyo-form-richtext',
+    // Grab inner spans for text assertions (e.g. "GET 15% OFF")
+    headingSpans: '[data-testid="POPUP"] .klaviyo-form-richtext:first-of-type span',
 
     // ─── Email Input ────────────────────────────────────────────────────────
-    emailInput:             '[data-testid="POPUP"] input[type="email"][name="email"]',
+    emailInput: '[data-testid="POPUP"] input[type="email"][name="email"]',
 
     // ─── Buttons ────────────────────────────────────────────────────────────
     // The popup has exactly two .klaviyo-form-button elements:
     //   1st → "UNLOCK MY 15% OFF"   (primary CTA)
     //   2nd → "No Thanks, I'll Pay Full Price."  (dismiss)
-    allButtons:             '[data-testid="POPUP"] button.klaviyo-form-button',
-    unlockDiscountBtn:      '[data-testid="POPUP"] button.klaviyo-form-button',
-    noThanksBtn:            '[data-testid="POPUP"] button.klaviyo-form-button',
+    allButtons: '[data-testid="POPUP"] button.klaviyo-form-button',
+    unlockDiscountBtn: '[data-testid="POPUP"] button.klaviyo-form-button:first-of-type',
+    noThanksBtn: '[data-testid="POPUP"] button.klaviyo-form-button:last-of-type',
 
     // ─── Disclaimer / Footer Rich Text ──────────────────────────────────────
-    disclaimerRichText:     '[data-testid="POPUP"] .klaviyo-form-richtext',
-    privacyPolicyLink:      '[data-testid="POPUP"] a[href*="privacy-policy"]',
+    disclaimerRichText: '[data-testid="POPUP"] .klaviyo-form-richtext:last-of-type',
+    privacyPolicyLink: '[data-testid="POPUP"] a[href*="privacy-policy"]',
 
     // ─── Popup Image ────────────────────────────────────────────────────────
-    popupImage:             '[data-testid="POPUP"] form.klaviyo-form img',
+    popupImage: '[data-testid="POPUP"] form.klaviyo-form img',
 
     // ─── Form Rows & Components (generic) ───────────────────────────────────
-    formRows:               '[data-testid="POPUP"] [data-testid="form-row"]',
-    formComponents:         '[data-testid="POPUP"] [data-testid="form-component"]',
+    formRows: '[data-testid="POPUP"] [data-testid="form-row"]',
+    formComponents: '[data-testid="POPUP"] [data-testid="form-component"]',
 
     // ─── Hidden Submit ──────────────────────────────────────────────────────
-    hiddenSubmitInput:      '[data-testid="POPUP"] input[type="submit"]',
+    hiddenSubmitInput: '[data-testid="POPUP"] input[type="submit"]',
 
 };
 

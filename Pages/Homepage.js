@@ -1,8 +1,4 @@
 const { expect } = require('@playwright/test');
-const Navbar = require('./components/Navbar');
-const HeroSection = require('./components/HeroSection');
-const ProductContainer = require('./components/ProductContainer');
-const Marquee = require('./components/Marquee');
 const HomepageLocators = require('../Locators/HomepageLocators');
 
 /**
